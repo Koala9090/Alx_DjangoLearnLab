@@ -21,22 +21,22 @@ Expected Output:<Book: 1984>
 
 # Update a Book Instance
 
-book_to_update = Book.objects.get(title="1984")
-book_to_update.title = "Nineteen Eighty-Four"
-book_to_update.save()
-print(book_to_update)
-Expected Output: <Book: Nineteen Eighty-Four>
+book = Book.objects.get(title="1984")
+book.title = "Nineteen Eighty-Four"
+book.save()
+print(book.title)  # book.title is used here directly
+print(book_to_update.title)  
+Expected Output: Nineteen Eighty-Four
 
 # The title of the book was successfully updated from "1984" to "Nineteen Eighty-Four".
 
 # Delete a Book Instance
+from bookshelf.models import Book
 
-book_to_delete = Book.objects.get(title="Nineteen Eighty-Four")
-book_to_delete.delete()
+book = Book.objects.get(title="Nineteen Eighty-Four")
+book.delete()  # Direct use of book.delete
 
-remaining_books = Book.objects.all()
-print(remaining_books)
 Expected Output: <QuerySet []>
 
-#The book "Nineteen Eighty-Four" was successfully deleted. The remaining books list is empty.
+# The book "Nineteen Eighty-Four" was successfully deleted. The remaining books list is empty.
 
