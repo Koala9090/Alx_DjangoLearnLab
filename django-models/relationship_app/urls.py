@@ -1,11 +1,19 @@
 from django.urls import path
 from . import views
+from django.contrib.auth.decorators import permission_required
 
 urlpatterns = [
-    path('books/add/', views.add_book, name='add_book'),
-    path('books/<int:book_id>/edit/', views.edit_book, name='edit_book'),
-    path('books/<int:book_id>/delete/', views.delete_book, name='delete_book'),
-    # Other URL patterns for your app
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('register/', views.register_view, name='register'),
+    
+    path('add_book/', permission_required('relationship_app.can_add_book')(views.add_book), name='add_book'),
+
+    path('edit_book/<int:pk>/', permission_required('relationship_app.can_change_book')(views.edit_book), name='edit_book'),
+
+    path('delete_book/<int:pk>/', permission_required('relationship_app.can_delete_book')(views.delete_book), name='delete_book'),
+    
+    # Other URL patterns
 ]
 
 
