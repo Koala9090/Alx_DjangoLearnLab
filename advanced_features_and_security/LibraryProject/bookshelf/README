@@ -1,0 +1,24 @@
+Permissions and Groups in My Django Application
+
+In this application, I've implemented Django's permission system to control access to various parts of the application, ensuring that users can only perform actions they are authorized for. Custom Permissions
+
+I have defined custom permissions for the Article model to manage user access more effectively:
+
+can_view_article: Allows users to view articles.
+can_create_article: Grants the ability to create new articles.
+can_edit_article: Permits editing of existing articles.
+can_delete_article: Enables deletion of articles.
+
+Groups
+
+To streamline permission management, I created the following groups:
+
+Editors: Members can create and edit articles.
+Viewers: Members have permission to view articles.
+Admins: Members can create, edit, and delete articles.
+
+Enforcing Permissions
+
+I've enforced permission checks in views using Django's @permission_required decorator. This ensures that users are restricted to actions they are authorized to perform, maintaining the application's security. Testing
+
+I recommend testing the setup by creating test users and assigning them to different groups. This will help verify that permissions are enforced correctly across the application.
