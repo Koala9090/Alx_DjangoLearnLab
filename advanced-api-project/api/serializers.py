@@ -11,7 +11,7 @@ class BookSerializer(serializers.ModelSerializer):
         if value > date.now().year:
             raise serializers.ValidationError('Publication date cannot be in the future')
         return value
-class AuthorSerializer (serializers.ModelSerializer):
+class AuthorSerializer(serializers.ModelSerializer):
     books = BookSerializer(many=True, read_only=True)
     class Meta:
         model = Author
