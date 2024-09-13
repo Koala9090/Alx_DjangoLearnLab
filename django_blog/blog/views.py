@@ -37,26 +37,26 @@ def profile(request):
     return render(request, 'profile.html',{'user': request.user})
 
 
-class PostListView(ListView):
+class ListView(ListView):
     model = Post
     template_name = 'templates/blog/list.html'
     context_object_name = 'posts'
-class PostDetailView(DetailView):
+class DetailView(DetailView):
     model = Post
     templete_name = 'templates/blog/detail.html'
-class PostCreateView(LoginRequiredMixin, CreateView):
+class CreateView(LoginRequiredMixin, CreateView):
     model = Post 
     form_class = PostForm
-    template_name = 'blog/post_form.html'
+    template_name = 'blog/form.html'
     success_url = reverse_lazy('post_list')
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
     
 
-class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class UpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
-    template_name = 'blog/post_form.html'
+    template_name = 'blog/form.html'
     form_class = PostForm
     def form_valid (self, form):
         form.instance.author = self.request.user
@@ -66,10 +66,10 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         post = self.get_object()
         return self.request.usert == post.author
     
-class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class DeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
-    template_name = 'blog/post_confirm_delete.html'
-    succes_url = reverse_lazy('post-list')
+    template_name = 'blog/confirm_delete.html'
+    succes_url = reverse_lazy('list')
 
     def test_func (self):
         post = self.get_object()
