@@ -1,34 +1,31 @@
 {% load static %}
+<!-- templates/blog/post_confirm_delete.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="{% static 'static/css/style.css' %}">
+    <title>Confirm Delete</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <header>
         <nav>
             <ul>
+                <li><a href="{% url 'post_list' %}">Home</a></li>
                 <li><a href="{% url 'login' %}">Login</a></li>
                 <li><a href="{% url 'register' %}">Register</a></li>
-                <li><a href="{% url 'profile' %}">Profile</a></li>
-                <li><a href="{% url 'logout' %}">Logout</a></li>
             </ul>
         </nav>
     </header>
 
     <div class="content">
-        <h2>Login</h2>
+        <h1>Are you sure you want to delete "{{ post.title }}"?</h1>
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Login</button>
+            <button type="submit">Confirm</button>
+            <a href="{% url 'post_detail' post.pk %}">Cancel</a>
         </form>
-        {% if form.errors %}
-            <p style="color:red;">{{ form.errors }}</p>
-        {% endif %}
     </div>
 
     <footer>
@@ -36,4 +33,3 @@
     </footer>
 </body>
 </html>
-
