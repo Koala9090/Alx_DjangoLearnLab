@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import register, profile, PostListView,  PostDetailView, PostCreateView, PostUpdateView, PostDeleteView
+from .views import register, profile, PostCreateView,  PostListView, PostDetailView, PostDeleteView, PostUpdateView
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth.views import LoginView
 
