@@ -133,7 +133,7 @@ def search_posts(request):
         posts = Post.objects.all()
 
     return render(request, 'blog/search_results.html', {'posts': posts})
-def posts_by_tag(request, tag_name):
+def PostByTagListView(request, tag_name):
     tag = get_object_or_404(Tag, name=tag_name)
     posts = tag.posts.all()
     return render(request, 'blog/posts_by_tag.html', {'posts': posts, 'tag': tag})
