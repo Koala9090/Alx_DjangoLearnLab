@@ -14,3 +14,10 @@ urlpatterns = [
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post_edit'),  # Edit an existing post
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),  # Delete a post
 ]
+#comment urls
+from .views import add_comment, edit_comment,CommentDeleteView
+urlpatterns = [
+    path('post/<int:post_id>/comments/new/', add_comment, name='add_comment'),
+    path('post/<int:post_id>/comments/<int:comment_id>/edit/', edit_comment, name='edit_comment'),
+    path('post/<int:post_id>/comments/<int:pk>/delete/', CommentDeleteView.as_view(), name='delete_comment'),
+]
