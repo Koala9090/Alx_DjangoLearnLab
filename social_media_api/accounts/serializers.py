@@ -24,17 +24,20 @@ class UserSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        user = User.objects.create_user(
+        user = get_user_model().objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
             password=validated_data['password'],
             first_name=validated_data['first_name'],
-            last_name=validated_data['last_name'],
-            bio=validated_data.get('bio', '')
+            last_name=validated_data['last_name']
         )
-        token, created = Token.objects.get_or_create(user=user)
+        user.bio = validated_data.get('bio', '')
+        user.save()
+
+        token = Token.objects.create(user=user)
         user.token = token.key
         return user
+
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
