@@ -9,7 +9,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from .models import CustomUser
-
+from notifications.utils import create_notification
 User = get_user_model()
 
 class RegisterView(generics.CreateAPIView):
@@ -62,3 +62,13 @@ class UnfollowUserView(generics.GenericAPIView):
         
         request.user.following.remove(user_to_unfollow)
         return Response({'success': f'You have unfollowed {user_to_unfollow.username}'}, status=status.HTTP_200_OK)
+    
+def follow_user(request, user_id):
+    # Existing follow logic
+    user_to_follow = CustomUser.objects.get(id=user_id)
+    request.user.following.add(user_to_follow)
+    
+    # Trigger notification
+    create_notification(actor=request.user, recipient=user_to_follow, verb="followed")
+    
+    return Response({"message": "You are now following this user."})

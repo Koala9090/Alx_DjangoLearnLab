@@ -6,6 +6,8 @@ from accounts.models import CustomUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from notifications.utils import create_notification
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 # Post ViewSet
@@ -43,3 +45,30 @@ class UserFeedView(APIView):
         serializer = PostSerializer(posts, many=True)
         
         return Response(serializer.data)
+# Like a post
+class LikePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, id=post_id)
+        post.likes.add(request.user)  # Assuming you have a many-to-many 'likes' field
+        # Trigger notification
+        create_notification(actor=request.user, recipient=post.author, verb="liked", target=post)
+        return Response({"message": "You liked this post."})
+
+# Unlike a post
+class UnlikePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, id=post_id)
+        post.likes.remove(request.user)  # Assuming you have a many-to-many 'likes' field
+        return Response({"message": "You unliked this post."})
+def like_post(request, post_id):
+    post = Post.objects.get(id=post_id)
+    post.likes.add(request.user)  # Assuming a like logic exists
+    
+    # Trigger notification
+    create_notification(actor=request.user, recipient=post.author, verb="liked", target=post)
+    
+    return Response({"message": "You liked this post."})
