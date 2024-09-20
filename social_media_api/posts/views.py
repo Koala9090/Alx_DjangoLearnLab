@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from notifications.utils import create_notification
 from django.shortcuts import get_object_or_404
+from rest_framework import generics
 
 # Create your views here.
 # Post ViewSet
@@ -51,14 +52,14 @@ class LikePostView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, post_id):
-        # Retrieve the post or return 404 if not found
-        post = get_object_or_404(Post, pk=post_id)
+        # Use generics.get_object_or_404 to retrieve the post
+        post = generics.get_object_or_404(Post, pk=post_id)
         
         # Get or create the like relationship between user and post
         like, created = Like.objects.get_or_create(user=request.user, post=post)
         
         if created:
-            # If the like was created (i.e., the user hadn't liked this post before), create notification
+            # Create a notification if a new like was created
             Notification.objects.create(
                 recipient=post.author,
                 actor=request.user,
@@ -67,7 +68,6 @@ class LikePostView(APIView):
             )
             return Response({"message": "You liked this post."})
         else:
-            # If the like already exists, notify the user
             return Response({"message": "You have already liked this post."})
 
 # Unlike a post
@@ -75,18 +75,17 @@ class UnlikePostView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, post_id):
-        # Retrieve the post or return 404 if not found
-        post = get_object_or_404(Post, pk=post_id)
+        # Use generics.get_object_or_404 to retrieve the post
+        post = generics.get_object_or_404(Post, pk=post_id)
         
         # Check if the user has liked the post before
         like = Like.objects.filter(user=request.user, post=post).first()
         
         if like:
-            # If the like exists, remove it
+            # Delete the like if it exists
             like.delete()
             return Response({"message": "You unliked this post."})
         else:
-            # If the like doesn't exist, notify the user
             return Response({"message": "You haven't liked this post yet."})
 def like_post(request, post_id):
     post = Post.objects.get(id=post_id)
