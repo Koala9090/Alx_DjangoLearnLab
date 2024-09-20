@@ -1,5 +1,5 @@
 from rest_framework import viewsets , permissions
-from .models import Post, Comment
+from .models import Post, Comment, Notification,Like
 from .serializers import PostSerializer, CommentSerializer
 from .permissions import IsOwnerOrReadOnly
 from accounts.models import CustomUser
@@ -45,25 +45,49 @@ class UserFeedView(APIView):
         serializer = PostSerializer(posts, many=True)
         
         return Response(serializer.data)
+    
 # Like a post
 class LikePostView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, post_id):
-        post = get_object_or_404(Post, id=post_id)
-        post.likes.add(request.user)  # Assuming you have a many-to-many 'likes' field
-        # Trigger notification
-        create_notification(actor=request.user, recipient=post.author, verb="liked", target=post)
-        return Response({"message": "You liked this post."})
+        # Retrieve the post or return 404 if not found
+        post = get_object_or_404(Post, pk=post_id)
+        
+        # Get or create the like relationship between user and post
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+        
+        if created:
+            # If the like was created (i.e., the user hadn't liked this post before), create notification
+            Notification.objects.create(
+                recipient=post.author,
+                actor=request.user,
+                verb='liked',
+                target=post
+            )
+            return Response({"message": "You liked this post."})
+        else:
+            # If the like already exists, notify the user
+            return Response({"message": "You have already liked this post."})
 
 # Unlike a post
 class UnlikePostView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, post_id):
-        post = get_object_or_404(Post, id=post_id)
-        post.likes.remove(request.user)  # Assuming you have a many-to-many 'likes' field
-        return Response({"message": "You unliked this post."})
+        # Retrieve the post or return 404 if not found
+        post = get_object_or_404(Post, pk=post_id)
+        
+        # Check if the user has liked the post before
+        like = Like.objects.filter(user=request.user, post=post).first()
+        
+        if like:
+            # If the like exists, remove it
+            like.delete()
+            return Response({"message": "You unliked this post."})
+        else:
+            # If the like doesn't exist, notify the user
+            return Response({"message": "You haven't liked this post yet."})
 def like_post(request, post_id):
     post = Post.objects.get(id=post_id)
     post.likes.add(request.user)  # Assuming a like logic exists
