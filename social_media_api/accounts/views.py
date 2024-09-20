@@ -39,41 +39,26 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     
 
     # View to follow a user
-class FollowUserView(APIView):
-    permission_classes = [IsAuthenticated]  # Ensure only authenticated users can follow others
+class FollowUserView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = CustomUser.objects.all()
 
-    def post(self, request, username):
-        # Get the user to follow
-        user_to_follow = get_object_or_404(CustomUser, username=username)
+    def post(self, request, user_id):
+        user_to_follow = get_object_or_404(CustomUser, id=user_id)
+        if request.user == user_to_follow:
+            return Response({'error': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        # The current user (the one making the request)
-        current_user = request.user
-        
-        # Prevent a user from following themselves
-        if current_user == user_to_follow:
-            return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Add the user to the following list
-        current_user.following.add(user_to_follow)
-        
-        return Response({"detail": f"You are now following {user_to_follow.username}."}, status=status.HTTP_200_OK)
+        request.user.following.add(user_to_follow)
+        return Response({'success': f'You are now following {user_to_follow.username}'}, status=status.HTTP_200_OK)
 
-# View to unfollow a user
-class UnfollowUserView(APIView):
-    permission_classes = [IsAuthenticated]  # Ensure only authenticated users can unfollow others
+class UnfollowUserView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = CustomUser.objects.all()
 
-    def post(self, request, username):
-        # Get the user to unfollow
-        user_to_unfollow = get_object_or_404(CustomUser, username=username)
+    def post(self, request, user_id):
+        user_to_unfollow = get_object_or_404(CustomUser, id=user_id)
+        if request.user == user_to_unfollow:
+            return Response({'error': 'You cannot unfollow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        # The current user (the one making the request)
-        current_user = request.user
-        
-        # Prevent a user from unfollowing themselves
-        if current_user == user_to_unfollow:
-            return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Remove the user from the following list
-        current_user.following.remove(user_to_unfollow)
-        
-        return Response({"detail": f"You have unfollowed {user_to_unfollow.username}."}, status=status.HTTP_200_OK)
+        request.user.following.remove(user_to_unfollow)
+        return Response({'success': f'You have unfollowed {user_to_unfollow.username}'}, status=status.HTTP_200_OK)
