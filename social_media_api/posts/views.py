@@ -89,7 +89,7 @@ class UnlikePostView(APIView):
             return Response({"message": "You haven't liked this post yet."})
 def like_post(request, post_id):
     post = Post.objects.get(id=post_id)
-    post.likes.add(request.user)  # Assuming a like logic exists
+    post.likes.add(request.user)  
     
     # Trigger notification
     create_notification(actor=request.user, recipient=post.author, verb="liked", target=post)
