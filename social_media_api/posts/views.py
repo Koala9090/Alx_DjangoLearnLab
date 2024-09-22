@@ -1,14 +1,13 @@
 from rest_framework import viewsets , permissions
-from .models import Post, Comment, Notification,Like
+from .models import Post, Comment,Like
 from .serializers import PostSerializer, CommentSerializer
 from .permissions import IsOwnerOrReadOnly
-from accounts.models import CustomUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from notifications.utils import create_notification
-from django.shortcuts import get_object_or_404
 from rest_framework import generics
+from notifications.models import Notification
 
 # Create your views here.
 # Post ViewSet
