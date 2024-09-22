@@ -1,0 +1,21 @@
+Deployment Documentation:
+
+1-Environment Setup:
+    PythonAnywhere account created
+    Virtual environment set up
+    MySQL database created
+2-Configuration:
+    settings.py updated for production and MySQL
+    WSGI file configured
+    Environment variables set in PythonAnywhere
+3-Database:
+    MySQL database created and configured
+    Migrations applied
+4-Static Files:
+    Collected and served through PythonAnywhere's static file serving
+5-Maintenance:
+    Update code: Pull from Git, update requirements, migrate if needed
+    Monitor app: Check error logs in PythonAnywhere dashboard
+    Database backups: Use MySQL Workbench or phpMyAdmin for backups
+6-Scaling:
+PythonAnywhere free tier has limitations. For scaling, consider upgrading to a paid plan or migrating to a more scalable platform in the future.
